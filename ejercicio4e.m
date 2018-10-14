@@ -1,6 +1,5 @@
 %% Ejercicio 4
-% b) Estimar variables de estado midiendo posición con un sesgo y el resto
-% sin
+% e) Estimar variables de estado midiendo aceleración con un sesgo
 % Voy a agregar al vector de estados común (de 6 cosas) 2 más, que son
 % sesgo en x y sesgo en y
 
@@ -9,6 +8,11 @@ clear all;close all;clc;
 load('datos.mat'); % Da Acel, Pos, tiempo, Vel
 
 %DATOS
+% IMPORTANTE: Parámetros que hay que analizar: 
+% var_ruido_proc_ses, que es la varianza que le damos al ruido de proceso
+% del sesgo.
+% Valores iniciales para el sesgo: estos supongo que son cosas que
+% diseñamos.
 var_ruido_proc_pos=3e-4;
 var_ruido_proc_vel=2e-3;
 var_ruido_proc_acel=1e-2;
@@ -34,33 +38,26 @@ Q_d = diag([var_ruido_proc_pos,
             ]);
 %Condiciones iniciales:
 x0 = [40 -200 0 0 0 0 0 0]';
-P0_0 = diag([10^6 10^6, 100 100, 10 10, 1e6 1e6]);
+P0_0 = diag([10^6 10^6, 100 100, 10 10, 1e2 1e2]);
 
 % Medimos posición, y le sumamos el sesgo:
 
-C_viejo = eye(6);
-sesgos_en_C = [eye(2); zeros(2); zeros(2)];
-C = [C_viejo sesgos_en_C];
+C_viejo = [0 0 0 0 1 0;
+     0 0 0 0 0 1];
+C = [C_viejo eye(2)];
 
 B = eye(8);
 
 % Armo las mediciones, con R para hacer el ruido y con su sesgo
 
-sigma_pos= 100; %Ruido de medicion para coordenadas x e y
-sigma_vel= 10;
-sigma_acel= 1;
-R= diag([sigma_pos^2 sigma_pos^2 sigma_vel^2 sigma_vel^2 sigma_acel^2 sigma_acel^2]);
-sesgo_x = 300;
-sesgo_y = 200;
+sigma_acel= 1; %Ruido de medicion para coordenadas x e y
+R= diag([sigma_acel^2 sigma_acel^2]);
+sesgo_x = 2;
+sesgo_y = 1;
 
-yk(:,1)=Pos(:,1)+sigma_pos*randn(length(Pos(:,1)),1) + sesgo_x * ones(length(Pos(:,1)),1);
-yk(:,2)=Pos(:,2)+sigma_pos*randn(length(Pos(:,2)),1) + sesgo_y * ones(length(Pos(:,2)),1);
-yk(:,3)=Vel(:,1)+sigma_vel*randn(length(Vel(:,1)),1);
-yk(:,4)=Vel(:,2)+sigma_vel*randn(length(Vel(:,2)),1);
-yk(:,5)=Acel(:,1)+sigma_acel*randn(length(Acel(:,1)),1);
-yk(:,6)=Acel(:,2)+sigma_acel*randn(length(Acel(:,2)),1);
-
-N=length(Pos);
+yk(:,1)=Acel(:,1)+sigma_acel*randn(length(Acel(:,1)),1) + sesgo_x * ones(length(Acel(:,1)),1);
+yk(:,2)=Acel(:,2)+sigma_acel*randn(length(Acel(:,2)),1) + sesgo_y * ones(length(Acel(:,1)),1);
+N=length(Acel);
 
 p00=P0_0;
 D=0;
