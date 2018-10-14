@@ -17,7 +17,7 @@ var_ruido_proc_pos=3e-4;
 var_ruido_proc_vel=2e-3;
 var_ruido_proc_acel=1e-2;
 % Esto es un parámetro para que el filtro de Kalman pueda ajustar bien
-var_ruido_proc_ses = 1e-5; 
+var_ruido_proc_ses = 1e-6; 
 
 A_sin_sesgo = [ 1 0 1 0 0.5 0;
         0 1 0 1 0 0.5;
@@ -38,7 +38,7 @@ Q_d = diag([var_ruido_proc_pos,
             ]);
 %Condiciones iniciales:
 x0 = [40 -200 0 0 0 0 0 0]';
-P0_0 = diag([10^6 10^6, 100 100, 10 10, 1e5 1e5]);
+P0_0 = diag([10^6 10^6, 100 100, 10 10, 1e7 1e7]);
 
 % Medimos posición, y le sumamos el sesgo:
 
@@ -55,8 +55,8 @@ R= diag([sigma_pos^2 sigma_pos^2]);
 sesgo_x = 300;
 sesgo_y = 200;
 
-yk(:,1)=Pos(:,1)+sigma_pos*0.01*randn(length(Pos(:,1)),1) + sesgo_x * ones(length(Pos(:,1)),1);
-yk(:,2)=Pos(:,2)+sigma_pos*0.01*randn(length(Pos(:,2)),1) + sesgo_y * ones(length(Pos(:,2)),1);
+yk(:,1)=Pos(:,1)+sigma_pos*randn(length(Pos(:,1)),1) + sesgo_x * ones(length(Pos(:,1)),1);
+yk(:,2)=Pos(:,2)+sigma_pos*randn(length(Pos(:,2)),1) + sesgo_y * ones(length(Pos(:,2)),1);
 N=length(Pos);
 
 p00=P0_0;
@@ -155,6 +155,29 @@ xlabel('Tiempo [muestras]')
 legend('Real', 'FK')
 print(h4,'a_vs_t','-dpng','-r0');
 hold off
+
+% Sesgo x vs tiempo
+h6=figure;
+subplot(2,1,1)
+hold on
+plot(Pos(:,3),x(7,:),'r-','LineWidth',1.6);
+grid on
+ylabel('Estimación del sesgo (x) [m]')
+xlabel('Tiempo [muestras]')
+%legend('Real', 'FK')
+hold off
+
+% Sesgo y vs tiempo
+subplot(2,1,2)
+hold on
+plot(Pos(:,3),x(8,:),'r-','LineWidth',1.6);
+grid on
+ylabel('Estimación del sesgo (y) [m]')
+xlabel('Tiempo [muestras]')
+%legend('Real', 'FK')
+print(h6,'sesgo','-dpng','-r0');
+hold off
+
 
 % Innovaciones
 h5=figure;

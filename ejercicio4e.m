@@ -38,7 +38,7 @@ Q_d = diag([var_ruido_proc_pos,
             ]);
 %Condiciones iniciales:
 x0 = [40 -200 0 0 0 0 0 0]';
-P0_0 = diag([10^6 10^6, 100 100, 10 10, 1e2 1e2]);
+P0_0 = diag([10^6 10^6, 100 100, 10 10, 1e1 1e1]);
 
 % Medimos posición, y le sumamos el sesgo:
 
@@ -154,6 +154,28 @@ ylabel('Acel-Y [m]')
 xlabel('Tiempo [muestras]')
 legend('Real', 'FK')
 print(h4,'a_vs_t','-dpng','-r0');
+hold off
+
+% Sesgo x vs tiempo
+h6=figure;
+subplot(2,1,1)
+hold on
+plot(Pos(:,3),x(7,:),'r-','LineWidth',1.6);
+grid on
+ylabel('Estimación del sesgo (x) [m/s^2]')
+xlabel('Tiempo [muestras]')
+%legend('Real', 'FK')
+hold off
+
+% Sesgo y vs tiempo
+subplot(2,1,2)
+hold on
+plot(Pos(:,3),x(8,:),'r-','LineWidth',1.6);
+grid on
+ylabel('Estimación del sesgo (y) [m/s^2]')
+xlabel('Tiempo [muestras]')
+%legend('Real', 'FK')
+print(h6,'sesgo','-dpng','-r0');
 hold off
 
 % Innovaciones

@@ -17,7 +17,7 @@ var_ruido_proc_pos=3e-4;
 var_ruido_proc_vel=2e-3;
 var_ruido_proc_acel=1e-2;
 % Esto es un parámetro para que el filtro de Kalman pueda ajustar bien
-var_ruido_proc_ses = 1e-5; 
+var_ruido_proc_ses = 1e-8; 
 
 A_sin_sesgo = [ 1 0 1 0 0.5 0;
         0 1 0 1 0 0.5;
@@ -169,6 +169,28 @@ ylabel('Acel-Y [m]')
 xlabel('Tiempo [muestras]')
 legend('Real', 'FK')
 print(h4,'a_vs_t','-dpng','-r0');
+hold off
+
+% Sesgo x vs tiempo
+h6=figure;
+subplot(2,1,1)
+hold on
+plot(Pos(:,3),x(7,:),'r-','LineWidth',1.6);
+grid on
+ylabel('Estimación del sesgo (x) [m/s]')
+xlabel('Tiempo [muestras]')
+%legend('Real', 'FK')
+hold off
+
+% Sesgo y vs tiempo
+subplot(2,1,2)
+hold on
+plot(Pos(:,3),x(8,:),'r-','LineWidth',1.6);
+grid on
+ylabel('Estimación del sesgo (y) [m/s]')
+xlabel('Tiempo [muestras]')
+%legend('Real', 'FK')
+print(h6,'sesgo','-dpng','-r0');
 hold off
 
 % Innovaciones

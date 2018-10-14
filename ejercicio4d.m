@@ -176,6 +176,28 @@ legend('Real', 'FK')
 print(h4,'a_vs_t','-dpng','-r0');
 hold off
 
+% Sesgo x vs tiempo
+h6=figure;
+subplot(2,1,1)
+hold on
+plot(Pos(:,3),x(7,:),'r-','LineWidth',1.6);
+grid on
+ylabel('Estimación del sesgo (x) [m/s]')
+xlabel('Tiempo [muestras]')
+%legend('Real', 'FK')
+hold off
+
+% Sesgo y vs tiempo
+subplot(2,1,2)
+hold on
+plot(Pos(:,3),x(8,:),'r-','LineWidth',1.6);
+grid on
+ylabel('Estimación del sesgo (y) [m/s]')
+xlabel('Tiempo [muestras]')
+%legend('Real', 'FK')
+print(h6,'sesgo','-dpng','-r0');
+hold off
+
 % Innovaciones
 h5=figure;
 hold on
